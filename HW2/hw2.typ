@@ -232,3 +232,10 @@ I have adhered to the Honor Code on this assignment.
 + Show a list of all students who are taking/have taken a course that they did
   not have the prerequisite classes for, as well as the corresponding course
   information.
+  // TODO: Still very much broken
+  ```sql
+	WITH t AS (SELECT takes.*, prereq_id
+	FROM takes JOIN prereq ON takes.course_id = prereq.course_id)
+
+	SELECT * FROM t AS a JOIN t AS b ON a.ID = b.ID AND a.course_id NOT IN (SELECT prereq_id FROM b);
+  ```
