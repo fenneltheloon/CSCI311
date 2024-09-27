@@ -237,5 +237,5 @@ I have adhered to the Honor Code on this assignment.
 	WITH t AS (SELECT takes.*, prereq_id
 	FROM takes JOIN prereq ON takes.course_id = prereq.course_id)
 
-	SELECT * FROM t AS a JOIN t AS b ON a.ID = b.ID AND a.course_id NOT IN (SELECT prereq_id FROM b);
+	SELECT * FROM t A JOIN t B ON A.ID = B.ID AND A.course_id NOT IN (SELECT prereq_id FROM B);
   ```
