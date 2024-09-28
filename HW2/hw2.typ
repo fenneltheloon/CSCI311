@@ -229,13 +229,128 @@ I have adhered to the Honor Code on this assignment.
     [FOCAL Pogramming],
     [Assembly Language Programming],
   )
++ \
+  ```sql
+	SELECT ID 
+	  FROM teaches a LEFT JOIN 
+	    (SELECT DISTINCT course_id 
+	      FROM course 
+	      WHERE title 
+	      LIKE "%programming%") b 
+	  ON a.course_id = b.course_id 
+	  WHERE b.course_id IS NOT NULL;
+  ```
+  #table(columns: 1,
+    [*ID*],
+    [22591]
+  )
 + Show a list of all students who are taking/have taken a course that they did
   not have the prerequisite classes for, as well as the corresponding course
   information.
-  // TODO: Still very much broken
   ```sql
-	WITH t AS (SELECT takes.*, prereq_id
-	FROM takes JOIN prereq ON takes.course_id = prereq.course_id)
+	SELECT ID, a.course_id, prereq_id 
+	  FROM takes a LEFT JOIN prereq b 
+	  ON a.course_id = b.course_id 
+	  AND b.prereq_id NOT IN 
+		(SELECT course_id 
+		  FROM takes 
+		  WHERE ID = a.ID)
+	  WHERE b.course_id IS NOT NULL
+	  ORDER BY CAST(ID AS UNSIGNED);
+  ```
+  Returns a table with 15637 rows (someone should really bring this up to the 
+  registrar...). Here are the first 10 (`LIMIT 10`) 
+  #table(columns: 3,
+	[*ID*], [*course_id*], [*prereq_id*],
+	[35], [760], [169],
+	[56], [612], [123],
+	[56], [795], [123],
+	[56], [852], [133],
+	[56], [852], [267],
+	[56], [972], [958],
+    [56], [242], [304],
+    [56], [242], [594],
+    [107], [349], [612],
+    [107], [362], [242],
+  )
++ \
+  ```sql
+	SELECT * 
+	  FROM classroom c JOIN section b JOIN section a
+	  ON a.building = b.building 
+	  AND b.building = c.building 
+	  AND a.room_number = b.room_number 
+	  AND b.room_number = c.room_number 
+	  AND a.semester = b.semester 
+	  AND a.year = b.year 
+	  AND a.time_slot_id = b.time_slot_id
+	  AND (a.course_id, a.sec_id) <> (b.course_id, b.sec_id);
+  ```
+  Returns an empty set (and thank goodness!)
+#set enum(start: 1)
++ \
+  ```sql
+	CREATE TABLE actors(
+	  AID int,
+	  name varchar(255),
+	  PRIMARY KEY(AID)
+	);
 
-	SELECT * FROM t A JOIN t B ON A.ID = B.ID AND A.course_id NOT IN (SELECT prereq_id FROM t WHERE );
+	CREATE TABLE movies(
+	  MID int,
+	  title varchar(255),
+	  PRIMARY KEY(MID)
+	);
+
+	CREATE TABLE actor_role(
+	  MID int,
+	  AID int,
+	  rolename varchar(255),
+	  FOREIGN KEY(MID) REFERENCES movies(MID),
+	  FOREIGN KEY(AID) REFERENCES actors(AID)
+	);
+  ```
++ \
+  ```sql
+	INSERT INTO actors
+	VALUES
+	(1, "Me"),
+	(2, "Charlie Chaplin"),
+	(3, "Benedict Cumberbatch");
+
+	INSERT INTO movies
+	VALUES
+	(1, "Spider Man"),
+	(2, "Spider Man 2"),
+	(3, "Polar Express");
+
+	INSERT INTO actor_role
+	VALUES
+	(1, 1, "Peter Parker"),
+	(1, 2, "Otto Octavius"),
+	(2, 3, "Conductor");
+  ```
++ \
+  ```sql
+    SELECT m.title, count(*) 
+      FROM actor_role r JOIN movies m JOIN actors a 
+      ON r.MID = m.MID
+      AND a.AID = r.AID
+      AND a.name = "Charlie Chaplin"
+      GROUP BY m.MID;
+  ```
++ \
+  ```sql
+    SELECT name 
+      FROM actors b LEFT JOIN actor_role r 
+      ON b.AID = r.AID 
+      WHERE r.AID IS NULL;
+  ```
++ \
+  I'm not entirely sure what you meant by don't use outer joins, I wasn't
+  planning on using an outer join in the first place?
+  ```sql
+	SELECT a.name, m.title
+	FROM actors a LEFT JOIN actor_role r ON a.AID = r.AID 
+	LEFT JOIN movies m ON r.MID = m.MID;
   ```
