@@ -1,5 +1,3 @@
-use car_dealer;
-
 create table brand
 (
     brand_id int primary key,
@@ -48,7 +46,7 @@ create table car
 create table stocks
 (
     dealer_id int,
-    vin       varchar(17),
+    vin       varchar(17) primary key,
     foreign key (dealer_id) references dealer (dealer_id),
     foreign key (vin) references car (vin)
 );
@@ -56,7 +54,7 @@ create table stocks
 create table owns
 (
     customer_id int,
-    vin         varchar(17),
+    vin         varchar(17) primary key,
     dealer_id   int,
     foreign key (customer_id) references customer (customer_id),
     foreign key (vin) references car (vin),
@@ -65,7 +63,7 @@ create table owns
 
 create table has_option
 (
-    vin       varchar(17),
+    vin       varchar(17) primary key,
     option_id int,
     foreign key (vin) references car (vin),
     foreign key (option_id) references options (option_id)

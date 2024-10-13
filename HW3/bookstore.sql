@@ -48,7 +48,8 @@ create table written_by
     name varchar(257),
     isbn int,
     foreign key (name) references author (name),
-    foreign key (isbn) references book (isbn)
+    foreign key (isbn) references book (isbn),
+    primary key (name, isbn)
 );
 
 create table published_by
@@ -56,7 +57,8 @@ create table published_by
     name varchar(256),
     isbn int,
     foreign key (name) references publisher (name),
-    foreign key (isbn) references book (isbn)
+    foreign key (isbn) references book (isbn),
+    primary key (name, isbn)
 );
 
 create table basket_of
@@ -64,7 +66,8 @@ create table basket_of
     email     varchar(256),
     basket_id int,
     foreign key (email) references customer (email),
-    foreign key (basket_id) references shopping_basket (basket_id)
+    foreign key (basket_id) references shopping_basket (basket_id),
+    primary key (email, basket_id)
 );
 
 create table contains
@@ -73,7 +76,8 @@ create table contains
     basket_id int,
     number    int,
     foreign key (isbn) references book (isbn),
-    foreign key (basket_id) references shopping_basket (basket_id)
+    foreign key (basket_id) references shopping_basket (basket_id),
+    primary key (isbn, basket_id)
 );
 
 create table stocks
@@ -82,7 +86,8 @@ create table stocks
     code   int,
     number int,
     foreign key (isbn) references book (isbn),
-    foreign key (code) references warehouse (code)
+    foreign key (code) references warehouse (code),
+    primary key (isbn, code)
 );
 
 create table video
