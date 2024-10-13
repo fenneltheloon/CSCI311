@@ -24,3 +24,7 @@ I have adhered to the Honor Code on this assignment.
   constraints.
 
   #raw(read("car_dealer.sql"), lang: "sql")
++ \
+  #image("hw3-3.png")
+
+  #raw(read("imudb.sql"), lang: "sql")
