@@ -1,11 +1,20 @@
 #set page(height:auto)
 #set text(font: "New Computer Modern")
 #set enum(numbering: "1.")
+#show link: set text(fill: blue)
+#show link: underline
 
 = Homework 4
 Ethan Meltzer\
 I have adhered to the Honor Code on this assignment.
 
+== Part 1
++ http://sql.cs.oberlin.edu/emeltzer/dbForm.html
++ http://sql.cs.oberlin.edu/emeltzer/hw4-1-2.html
+
+Make sure that you are using eduroam or the Oberlin VPN to access!
+
+== Part 2
 + \
   - Fuzzy search over all attributes, or by category/label
   - Combine said above searches with logical operators (AND, OR, NOT)
