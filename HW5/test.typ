@@ -1,6 +1,5 @@
 #import "@preview/fletcher:0.5.2"
 #set page(height: auto)
-#set text(font: "New Computer Modern")
 
 #let arraybox(..args) = {
     let items = args.pos()
@@ -18,39 +17,6 @@
   "<": (inherit: "solid", rev: true),
 ))
 
-= Homework 5
-Ethan Meltzer\
-I have adhered to the Honor Code on this assignment.
-
-== Indices
-
-
-1\
-#align(center)[
-#fletcher.diagram({
-  import fletcher: node, edge
-  let node = node.with(inset: 0pt, stroke: none)
-  node((0, 0), arraybox("", "Srinivasan", "", " ", "", " ", ""))
-})]
-
-2\
-#align(center)[
-#fletcher.diagram({
-  import fletcher: node, edge
-  let node = node.with(inset: 0pt, stroke: none)
-  node((0, 0), arraybox("", "Srinivasan", "", "Wu", "", " ", ""))
-})]
-
-3\
-#align(center)[
-#fletcher.diagram({
-  import fletcher: node, edge
-  let node = node.with(inset: 0pt, stroke: none)
-  node((0, 0), arraybox("", "Srinivasan", "", "Wu", "", "Mozart", ""))
-})]
-
-4\
-#align(center)[
 #fletcher.diagram({
   import fletcher: node, edge
   let node = node.with(inset: 0pt, stroke: none)
@@ -60,4 +26,15 @@ I have adhered to the Honor Code on this assignment.
   edge(<l1>, <l2>, "->")
   edge((rel: (-3em, 0em), to: <r>), (rel:(-7em, 0em), to: <l1>), "->")
   edge(<r>, <l2>, "->")
-})]
+})
+
+#fletcher.diagram({
+  import fletcher: node, edge
+  let node = node.with(inset: 0pt, stroke: none)
+  node((0, 0), arraybox("", "Mozart", "", " ", "", " ", ""), name: <r>)
+  node((-0.65, 1), arraybox("", "Srinivasan", "", "Wu", "", " ", ""), name: <l1>)
+  node((0.65, 1), arraybox("", "Mozart", "", "Einstein", "", " ", ""), name: <l2>)
+  edge(<l1>, <l2>, "->")
+  edge((rel: (-3em, 0em), to: <r>), (rel:(-6em, 0em), to: <l1>), "->")
+  edge(<r>, <l2>, "->")
+})
