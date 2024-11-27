@@ -1,63 +1,107 @@
-#import "@preview/fletcher:0.5.2"
 #set page(height: auto)
 #set text(font: "New Computer Modern")
-
-#let arraybox(..args) = {
-    let items = args.pos()
-    grid(
-      inset: 5pt,
-      stroke: 1pt,
-      rows: 1.5em,
-      columns: items.len(),
-      ..items.map(i => [#i])
-    )
-}
-
-#fletcher.MARKS.update(m => m + (
-  ">": (inherit: "solid", rev: false),
-  "<": (inherit: "solid", rev: true),
-))
 
 = Homework 5
 Ethan Meltzer\
 I have adhered to the Honor Code on this assignment.
 
 == Indices
-
-
+=== B+ Tree
 1\
 #align(center)[
-#fletcher.diagram({
-  import fletcher: node, edge
-  let node = node.with(inset: 0pt, stroke: none)
-  node((0, 0), arraybox("", "Srinivasan", "", " ", "", " ", ""))
-})]
-
+#image("hw5-1.svg")
+]
 2\
 #align(center)[
-#fletcher.diagram({
-  import fletcher: node, edge
-  let node = node.with(inset: 0pt, stroke: none)
-  node((0, 0), arraybox("", "Srinivasan", "", "Wu", "", " ", ""))
-})]
-
+#image("hw5-2.svg")
+]
 3\
 #align(center)[
-#fletcher.diagram({
-  import fletcher: node, edge
-  let node = node.with(inset: 0pt, stroke: none)
-  node((0, 0), arraybox("", "Srinivasan", "", "Wu", "", "Mozart", ""))
-})]
-
+#image("hw5-3.svg")
+]
 4\
 #align(center)[
-#fletcher.diagram({
-  import fletcher: node, edge
-  let node = node.with(inset: 0pt, stroke: none)
-  node((0, 0), arraybox("", "Mozart", "", " ", "", " ", ""), name: <r>)
-  node((-0.65, 1), arraybox("", "Srinivasan", "", "Wu", "", " ", ""), name: <l1>)
-  node((0.65, 1), arraybox("", "Mozart", "", "Einstein", "", " ", ""), name: <l2>)
-  edge(<l1>, <l2>, "->")
-  edge((rel: (-3em, 0em), to: <r>), (rel:(-7em, 0em), to: <l1>), "->")
-  edge(<r>, <l2>, "->")
-})]
+#image("hw5-4.svg")
+]
+5\
+#align(center)[
+#image("hw5-5.svg")
+]
+6\
+#align(center)[
+#image("hw5-6.svg")
+]
+7\
+#align(center)[
+#image("hw5-7.svg")
+]
+8\
+#align(center)[
+#image("hw5-8.svg")
+]
+9\
+#align(center)[
+#image("hw5-9.svg")
+]
+10\
+#align(center)[
+#image("hw5-10.svg")
+]
+11\
+#align(center)[
+#image("hw5-11.svg")
+]
+12\
+#align(center)[
+#image("hw5-12.svg")
+]
+=== Dynamic Hash
+1\
+#align(center)[
+#image("hw5-2-1.svg")
+]
+2\
+#align(center)[
+#image("hw5-2-2.svg")
+]
+3\
+#align(center)[
+#image("hw5-2-3.svg")
+]
+4\
+#align(center)[
+#image("hw5-2-4.svg")
+]
+5\
+#align(center)[
+#image("hw5-2-5.svg")
+]
+6\
+#align(center)[
+#image("hw5-2-6.svg")
+]
+7\
+#align(center)[
+#image("hw5-2-7.svg")
+]
+8\
+#align(center)[
+#image("hw5-2-8.svg")
+]
+9\
+#align(center)[
+#image("hw5-2-9.svg")
+]
+10\
+#align(center)[
+#image("hw5-2-10.svg")
+]
+11\
+#align(center)[
+#image("hw5-2-11.svg")
+]
+12\
+#align(center)[
+#image("hw5-2-12.svg")
+]
+== Project Part II
