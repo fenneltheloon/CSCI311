@@ -1,5 +1,7 @@
 #set page(height: auto)
 #set text(font: "New Computer Modern")
+#show link: underline
+#show link: set text(blue)
 
 = Homework 5
 Ethan Meltzer\
@@ -105,3 +107,13 @@ I have adhered to the Honor Code on this assignment.
 #image("hw5-2-12.svg")
 ]
 == Project Part II
+URLs for the created tables:\
+https://everwild.dev/CSCI311/objects.html\
+https://everwild.dev/CSCI311/dates.html\
+https://everwild.dev/CSCI311/dimensions.html\
+https://everwild.dev/CSCI311/materials.html\
+https://everwild.dev/CSCI311/object_has_material.html\
+And for the scripts I used to help put everything together (downloads):  
+https://everwild.dev/CSCI311/parser.ipynb\
+https://everwild.dev/CSCI311/htmlify.py\
+
