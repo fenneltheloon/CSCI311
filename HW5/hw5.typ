@@ -116,4 +116,3 @@ https://everwild.dev/CSCI311/object_has_material.html\
 And for the scripts I used to help put everything together (downloads):  
 https://everwild.dev/CSCI311/parser.ipynb\
 https://everwild.dev/CSCI311/htmlify.py\
-
