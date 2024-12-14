@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AMAM Database App</title>
+    <script type="text/javascript">
+        function handleSelection(value, formId) {
+            document.getElementById('filterType'+formId).disabled=true;
+            if (value === "dates") {
+                document.getElementById('startDateInput'+formId).hidden=false;
+                document.getElementById('startDateInput'+formId).disabled=false;
+                document.getElementById('endDateInput'+formId).hidden=false;
+                document.getElementById('endDateInput'+formId).disabled=false;
+
+                document.getElementById('searchTerm'+formId).hidden=true;
+                document.getElementById('searchTerm'+formId).disabled=true;
+            }
+            document.getElementById('filterType'+formId).disabled=false;
+        }
+    </script>
+</head>
+<body>
+<h1>AMAM Database Lookup</h1>
+<form id="queryForm" action="form_action.php" method="get">
+    <fieldset>
+        <select name="filterType1" id="filterType1" onchange="handleSelection(value, 1)">
+            <option value="keyword">Keyword</option>
+            <option value="objectid">Object ID</option>
+            <option value="accnum">Accession Number</option>
+            <option value="objnum">Object Number</option>
+            <option value="sornum">Sort Number</option>
+            <option value="department">Department</option>
+            <option value="classification">Classification</option>
+            <option value="acqmet">Acquisition Method</option>
+            <option value="objsta">Object Status</option>
+            <option value="artmak">Artist/Maker</option>
+            <option value="title">Title</option>
+            <option value="objnam">Object Name</option>
+            <option value="dates">Dates</option>
+            <option value="mattec">Materials/Techniques</option>
+            <option value="dimensions">Dimensions</option>
+            <option value="description">Description</option>
+            <option value="crelin">Credit Line</option>
+            <option value="culture">Culture</option>
+            <option value="perdyn">Period/Dynasty</option>
+            <option value="emuslab">eMuseum Label Text</option>
+        </select>
+        <input type="text" name="searchTerm1" id="searchTerm1" placeholder="Enter search term">
+        <input type="number" name="startDateInput1" id="startDateInput1" placeholder="Enter start year">
+        <input type="number" name="endDateInput1" id="endDateInput1" placeholder="Enter end year">
+        <select name="dimensionType1" id="dimensionType1">
+            <option disabled selected>Select a dimension</option>
+            <option value="length">Length (cm)</option>
+            <option value="weight">Weight (kg)</option>
+            <option value="duration">Duration (min)</option>
+        </select>
+
+    </fieldset>
+
+</form>
+</body>
+</html>
