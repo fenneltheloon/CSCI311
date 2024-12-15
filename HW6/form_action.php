@@ -19,12 +19,18 @@ function dbGetIDs($db, $filter)
 {
     if ($filter['type'] == 'Dates') {
         $query = $db->prepare('select objects.ObjectID from objects join dates on objects.ObjectID = dates.ObjectID where 
-        ("Start Year" >= :startyear and "End Year" <= :endyear) or
-        ("Start Year" <= :startyear and "End Year" >= :endyear) or
-        ("Start Year" >= :startyear and "Start Year" <= :endyear) or
-        ("End Year" >= :startyear and "End Year" <= :endyear)');
-        $query->bindValue(':startyear', $filter['startYear']);
-        $query->bindValue(':endyear', $filter['endYear']);
+        ("Start Year" >= ? and "End Year" <= ?) or
+        ("Start Year" <= ? and "End Year" >= ?) or
+        ("Start Year" >= ? and "Start Year" <= ?) or
+        ("End Year" >= ? and "End Year" <= ?)');
+        for ($i = 1; $i <= 8; $i++) {
+            if ($i % 2 == 0) {
+                $query->bindValue($i, $filter['endYear'], SQLITE3_INTEGER);
+            } else {
+                $query->bindValue($i, $filter['startYear'], SQLITE3_INTEGER);
+            }
+        }
+        //TODO: it doesnt workkkkkk
         $result = $query->execute();
     } else if ($filter['type'] == 'Materials / Techniques'){
         $query = $db->prepare('select objects.ObjectID from (objects join object_has_material 
@@ -50,17 +56,18 @@ function dbGetEntries($db, $ids)
     $query = 'select ObjectID, Title, "Object Name", "Artist/Maker", Dated, "Materials / Techniques", 
         Dimensions, "Credit Line", "Accession Number", "Object Status", Department, Classification, "Acquisition Method", 
         Description, Culture, "Period/Dynasty", "eMuseum Label Text" from objects where ObjectID in (';
-    foreach ($ids as $id) {
-        $query .= '?,';
+    foreach ($ids as $ignored) {
+        $query .= '?, ';
     }
-    $query = rtrim($query, ',');
+    $query = rtrim($query, ', ');
     $query .= ')';
     $query = $db->prepare($query);
-    foreach ($ids as $index=>$id) {
-        $query->bindValue($index+1, $id);
+    $index = 1;
+    foreach ($ids as $id) {
+        $query->bindValue($index, $id);
+        $index += 1;
     }
-    $result = $query->execute();
-    return $result;
+    return $query->execute();
 }
 
 function processInput($input): string
@@ -71,11 +78,11 @@ function processInput($input): string
     return htmlspecialchars($input);
 }
 
-function formatResults($result)
+function formatResults($result): void
 {
     while ($table = $result->fetchArray(SQLITE3_ASSOC)){
         printf("<details><summary><b>%s</b></summary>", $table["Title"]);
-        foreach ($table as $colname => $item) {
+        foreach ($table as $colname=>$item) {
             if ($colname == 'ObjectID') {
                 printf("<a href=\"https://allenartcollection.oberlin.edu/objects/%d\" target=\"_blank\">Visit AMAM Object Page</a>", $item);
             } elseif ($colname == 'Title') {
@@ -89,14 +96,14 @@ function formatResults($result)
     }
 }
 
-function getFilters()
+function getFilters(): array
 {
     $index = 1;
     $filters = [];
     while (isset($_GET["filterType" . $index])) {
         $filter_type = processInput($_GET["filterType" . $index]);
-        if ($filter_type == 'dates') {
-            $filters[$index] = ['type' => $filter_type, 'startYear' => processInput($_GET['startDateInput' . $index]), 'endYear' => processInput($_GET['endDateInput' . $index])];
+        if ($filter_type == 'Dates') {
+            $filters[$index] = ['type' => $filter_type, 'startYear' => (int)processInput($_GET['startDateInput' . $index]), 'endYear' => (int)processInput($_GET['endDateInput' . $index])];
         } else {
             $filters[$index] = ['type' => $filter_type, 'searchTerm' => processInput($_GET['searchTerm' . $index])];
         }
@@ -106,8 +113,31 @@ function getFilters()
     return $filters;
 }
 
+function filterCombine($ids): array
+{
+    $combine = processInput($_GET['filterCombine']);
+    $id_uniq = array_unique($ids);
+    if ($combine == 'OR') {
+        return $id_uniq;
+    } else {
+        return array_diff_assoc($ids, $id_uniq);
+    }
+}
+
 $db = new SQLite3('museum.db', SQLITE3_OPEN_READONLY, "");
-formatResults(dbkeyword($db));
+$filters = getFilters();
+$ids = [];
+foreach ($filters as $index=>$filter) {
+    $result = dbGetIDs($db, $filter);
+    $test = 0;
+    while ($row = $result->fetchArray(SQLITE3_NUM)){
+        $ids[] = $row[0];
+        $test += 1;
+    }
+}
+$ids = filterCombine($ids);
+$result = dbGetEntries($db, $ids);
+formatResults($result);
 $db->close();
 ?>
 
