@@ -6,7 +6,7 @@
     <script type="text/javascript">
         function handleSelection(value, formId) {
             document.getElementById('filterType'+formId).disabled=true;
-            if (value === "dates") {
+            if (value === "Dates") {
                 document.getElementById('startDateInput'+formId).hidden=false;
                 document.getElementById('startDateInput'+formId).disabled=false;
                 document.getElementById('endDateInput'+formId).hidden=false;
@@ -15,47 +15,164 @@
                 document.getElementById('searchTerm'+formId).hidden=true;
                 document.getElementById('searchTerm'+formId).disabled=true;
             }
+            else {
+                document.getElementById('startDateInput'+formId).hidden=true;
+                document.getElementById('startDateInput'+formId).disabled=true;
+                document.getElementById('endDateInput'+formId).hidden=true;
+                document.getElementById('endDateInput'+formId).disabled=true;
+
+                document.getElementById('searchTerm'+formId).hidden=false;
+                document.getElementById('searchTerm'+formId).disabled=false;
+
+            }
             document.getElementById('filterType'+formId).disabled=false;
+        }
+
+        function addFilter(formId) {
+            document.getElementById('addFilter' + formId).remove();
+            var removebutton = document.getElementById('removeFilter' + (formId - 1));
+            if (removebutton) {
+                removebutton.remove();
+            }
+            var fieldset = document.createElement('fieldset');
+            fieldset.setAttribute('id', 'filter' + formId);
+            var legend = document.createElement('legend');
+            legend.innerText = 'Filter ' + formId;
+            fieldset.appendChild(legend);
+
+            var filtertype = document.createElement("select");
+            filtertype.setAttribute('name', 'filterType' + formId);
+            filtertype.setAttribute('id', 'filterType' + formId);
+            filtertype.setAttribute('onchange', 'handleSelection(value, ' + formId + ')');
+            filtertype.innerHTML = '<option value="Keyword" selected>Keyword</option>\n' +
+                '<option value="ObjectID">Object ID</option>\n' +
+                '<option value="Accession Number">Accession Number</option>\n' +
+                '<option value="Object Number">Object Number</option>\n' +
+                '<option value="Sort Number">Sort Number</option>\n' +
+                '<option value="Department">Department</option>\n' +
+                '<option value="Classification">Classification</option>\n' +
+                '<option value="Acquisition Method">Acquisition Method</option>\n' +
+                '<option value="Object Status">Object Status</option>\n' +
+                '<option value="Artist/Maker">Artist/Maker</option>\n' +
+                '<option value="Title">Title</option>\n' +
+                '<option value="Object Name">Object Name</option>\n' +
+                '<option value="Dates">Dates</option>\n' +
+                '<option value="Materials/Techniques">Materials/Techniques</option>\n' +
+                '<option value="Dimensions">Dimensions</option>\n' +
+                '<option value="Description">Description</option>\n' +
+                '<option value="Credit Line">Credit Line</option>\n' +
+                '<option value="Culture">Culture</option>\n' +
+                '<option value="Period/Dynasty">Period/Dynasty</option>\n' +
+                '<option value="eMuseum Label Text">eMuseum Label Text</option>\n';
+            fieldset.appendChild(filtertype);
+
+            var searchterm = document.createElement("input");
+            searchterm.setAttribute('type', 'text');
+            searchterm.setAttribute('name', 'searchTerm' + formId);
+            searchterm.setAttribute('id', 'searchTerm' + formId);
+            searchterm.setAttribute('placeholder', 'Enter search term');
+            fieldset.appendChild(searchterm)
+
+            var startdateinput = document.createElement('input');
+            startdateinput.setAttribute('type', 'number');
+            startdateinput.setAttribute('name', 'startDateInput' + formId);
+            startdateinput.setAttribute('id', 'startDateInput' + formId);
+            startdateinput.setAttribute('placeholder', 'Enter start year');
+            startdateinput.setAttribute('hidden', true);
+            startdateinput.setAttribute('disabled', true);
+            fieldset.appendChild(startdateinput);
+
+            var enddateinput = document.createElement('input');
+            enddateinput.setAttribute('type', 'number');
+            enddateinput.setAttribute('name', 'endDateInput' + formId);
+            enddateinput.setAttribute('id', 'endDateInput' + formId);
+            enddateinput.setAttribute('placeholder', 'Enter end year');
+            enddateinput.setAttribute('hidden', true);
+            enddateinput.setAttribute('disabled', true);
+            fieldset.appendChild(enddateinput);
+
+            var addbutton = document.createElement("button");
+            addbutton.setAttribute('id', 'addFilter' + (formId + 1));
+            addbutton.setAttribute('onclick', 'addFilter(' + (formId + 1) + ')');
+            addbutton.innerText = "Add Filter";
+
+            removebutton = document.createElement('button');
+            removebutton.setAttribute('id', 'removeFilter' + formId);
+            removebutton.setAttribute('onclick', 'removeFilter(' + formId + ')');
+            removebutton.innerText = "Remove Filter";
+
+            if (formId === 1) {
+                var filtercombine = document.getElementById('filterCombineSet');
+                filtercombine.after(fieldset, addbutton, removebutton);
+            } else {
+                var lastfilter = document.getElementById('filter' + (formId - 1));
+                lastfilter.after(fieldset, addbutton, removebutton);
+            }
+        }
+
+        function removeFilter(formId) {
+            document.getElementById('addFilter' + (formId + 1)).remove();
+            document.getElementById('removeFilter' + formId).remove();
+            document.getElementById('filter' + formId).remove();
+
+            var addbutton = document.createElement("button");
+            addbutton.setAttribute('id', 'addFilter' + formId);
+            addbutton.setAttribute('onclick', 'addFilter(' + formId + ')');
+            addbutton.innerText = "Add Filter";
+            if (formId !== 1) {
+                var removebutton = document.createElement('button');
+                removebutton.setAttribute('id', 'removeFilter' + (formId - 1));
+                removebutton.setAttribute('onclick', 'removeFilter(' + (formId - 1) + ')');
+                removebutton.innerText = "Remove Filter";
+                var lastfilter = document.getElementById('filter' + (formId - 1));
+                lastfilter.after(addbutton, removebutton);
+            } else {
+                var filtercombine = document.getElementById('filterCombineSet');
+                filtercombine.after(addbutton);
+            }
         }
     </script>
 </head>
 <body>
 <h1>AMAM Database Lookup</h1>
 <form id="queryForm" action="form_action.php" method="get">
-    <fieldset>
+    <fieldset id="filterCombineSet">
+        <legend>Filter Combine</legend>
+        <label>AND<input type="radio" name="filterCombine" id="filterCombineAnd" checked></label>
+        <label>OR<input type="radio" name="filterCombine" id="filterCombineOr"></label>
+    </fieldset>
+    <fieldset id="filter1">
+        <legend>Filter 1</legend>
         <select name="filterType1" id="filterType1" onchange="handleSelection(value, 1)">
-            <option value="keyword">Keyword</option>
-            <option value="objectid">Object ID</option>
-            <option value="accnum">Accession Number</option>
-            <option value="objnum">Object Number</option>
-            <option value="sornum">Sort Number</option>
-            <option value="department">Department</option>
-            <option value="classification">Classification</option>
-            <option value="acqmet">Acquisition Method</option>
-            <option value="objsta">Object Status</option>
-            <option value="artmak">Artist/Maker</option>
-            <option value="title">Title</option>
-            <option value="objnam">Object Name</option>
-            <option value="dates">Dates</option>
-            <option value="mattec">Materials/Techniques</option>
-            <option value="dimensions">Dimensions</option>
-            <option value="description">Description</option>
-            <option value="crelin">Credit Line</option>
-            <option value="culture">Culture</option>
-            <option value="perdyn">Period/Dynasty</option>
-            <option value="emuslab">eMuseum Label Text</option>
+            <option value="Keyword" selected>Keyword</option>
+            <option value="ObjectID">Object ID</option>
+            <option value="Accession Number">Accession Number</option>
+            <option value="Object Number">Object Number</option>
+            <option value="Sort Number">Sort Number</option>
+            <option value="Department">Department</option>
+            <option value="Classification">Classification</option>
+            <option value="Acquisition Method">Acquisition Method</option>
+            <option value="Object Status">Object Status</option>
+            <option value="Artist/Maker">Artist/Maker</option>
+            <option value="Title">Title</option>
+            <option value="Object Name">Object Name</option>
+            <option value="Dates">Dates</option>
+            <option value="Materials/Techniques">Materials/Techniques</option>
+            <option value="Dimensions">Dimensions</option>
+            <option value="Description">Description</option>
+            <option value="Credit Line">Credit Line</option>
+            <option value="Culture">Culture</option>
+            <option value="Period/Dynasty">Period/Dynasty</option>
+            <option value="eMuseum Label Text">eMuseum Label Text</option>
         </select>
         <input type="text" name="searchTerm1" id="searchTerm1" placeholder="Enter search term">
-        <input type="number" name="startDateInput1" id="startDateInput1" placeholder="Enter start year">
-        <input type="number" name="endDateInput1" id="endDateInput1" placeholder="Enter end year">
-        <select name="dimensionType1" id="dimensionType1">
-            <option disabled selected>Select a dimension</option>
-            <option value="length">Length (cm)</option>
-            <option value="weight">Weight (kg)</option>
-            <option value="duration">Duration (min)</option>
-        </select>
-
+        <input type="number" name="startDateInput1" id="startDateInput1" placeholder="Enter start year" hidden disabled>
+        <input type="number" name="endDateInput1" id="endDateInput1" placeholder="Enter end year" hidden disabled>
     </fieldset>
+    <button id="addFilter2" onclick="addFilter(2)">Add Filter</button>
+    <button id="removeFilter1" onclick="removeFilter(1)">Remove Filter</button>
+    <br><br>
+    <input type="submit" name="submitButton" id="submitButton">
 
 </form>
 </body>
