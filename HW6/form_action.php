@@ -18,35 +18,32 @@
 function dbGetIDs($db, $filter)
 {
     if ($filter['type'] == 'Dates') {
-        $query = $db->prepare('select objects.ObjectID from objects join dates on objects.ObjectID = dates.ObjectID where 
-        ("Start Year" >= ? and "End Year" <= ?) or
-        ("Start Year" <= ? and "End Year" >= ?) or
-        ("Start Year" >= ? and "Start Year" <= ?) or
-        ("End Year" >= ? and "End Year" <= ?)');
-        for ($i = 1; $i <= 8; $i++) {
-            if ($i % 2 == 0) {
-                $query->bindValue($i, $filter['endYear'], SQLITE3_INTEGER);
-            } else {
-                $query->bindValue($i, $filter['startYear'], SQLITE3_INTEGER);
-            }
-        }
-        //TODO: it doesnt workkkkkk
+        $query = $db->prepare('select objects.ObjectID from objects join dates on objects.ObjectID = dates.ObjectID where
+        ("Start Year" >= :startyear and "End Year" <= :endyear) or
+        ("Start Year" <= :startyear and "End Year" >= :endyear) or
+        ("Start Year" >= :startyear and "Start Year" <= :endyear) or
+        ("End Year" >= :startyear and "End Year" <= :endyear)');
+        $query->bindValue(':startyear', $filter['startYear'], SQLITE3_INTEGER);
+        $query->bindValue(':endyear', $filter['endYear'], SQLITE3_INTEGER);
         $result = $query->execute();
-    } else if ($filter['type'] == 'Materials / Techniques'){
+    } else if ($filter['type'] == 'Materials/Techniques'){
         $query = $db->prepare('select objects.ObjectID from (objects join object_has_material 
         on objects.ObjectID = object_has_material.ObjectID) join materials 
-        on materials.MaterialID = object_has_material.MaterialID where Material = :material');
-        $query->bindValue(':material', $filter['searchTerm']);
+        on materials.MaterialID = object_has_material.MaterialID where Material like :material');
+        $query->bindValue(':material', "%" . $filter['searchTerm'] . "%");
         $result = $query->execute();
     } else if ($filter['type'] == 'Keyword') {
         $query = $db->prepare('select ObjectID from object_search where object_search match :searchterm order by rank');
         $query->bindValue(':searchterm', $filter['searchTerm']);
         $result = $query->execute();
     } else {
-        $query = $db->prepare('select ObjectID from objects where :column like \'%:searchterm%\'');
-        $query->bindValue(':column', $filter['type']);
-        $query->bindValue(':searchterm', $filter['searchTerm']);
-        $result = $query->execute();
+        $result = $db->query('select ObjectID from objects where "' . $filter['type'] . '" like "%' . $filter['searchTerm'] . '%"');
+        // Wildcards don't work well with PDO prepared statements in SQLite3?
+//        $query = $db->prepare('select ObjectID from objects where :column like :searchterm');
+//        $query->bindValue(':column', $filter['type'], SQLITE3_TEXT);
+//        var_dump($filter['type']);
+//        $query->bindValue(':searchterm', '%' . $filter['searchTerm'] . '%', SQLITE3_TEXT);
+//        $result = $query->execute();
     }
     return $result;
 }
@@ -104,6 +101,8 @@ function getFilters(): array
         $filter_type = processInput($_GET["filterType" . $index]);
         if ($filter_type == 'Dates') {
             $filters[$index] = ['type' => $filter_type, 'startYear' => (int)processInput($_GET['startDateInput' . $index]), 'endYear' => (int)processInput($_GET['endDateInput' . $index])];
+        } else if ($filter_type == 'Materials/Techniques') {
+            $filters[$index] = ['type' => $filter_type, 'searchTerm' => processInput($_GET['materialInput' . $index])];
         } else {
             $filters[$index] = ['type' => $filter_type, 'searchTerm' => processInput($_GET['searchTerm' . $index])];
         }
@@ -113,14 +112,26 @@ function getFilters(): array
     return $filters;
 }
 
-function filterCombine($ids): array
+function filterCombine($ids, $num_and): array
 {
     $combine = processInput($_GET['filterCombine']);
     $id_uniq = array_unique($ids);
     if ($combine == 'OR') {
         return $id_uniq;
     } else {
-        return array_diff_assoc($ids, $id_uniq);
+        $final = [];
+        foreach ($id_uniq as $uniq_id) {
+            $num_inst = 0;
+            foreach ($ids as $all_id) {
+                if ($uniq_id == $all_id) {
+                    $num_inst += 1;
+                }
+            }
+            if ($num_inst == $num_and) {
+                $final[] = $uniq_id;
+            }
+        }
+        return $final;
     }
 }
 
@@ -129,13 +140,11 @@ $filters = getFilters();
 $ids = [];
 foreach ($filters as $index=>$filter) {
     $result = dbGetIDs($db, $filter);
-    $test = 0;
     while ($row = $result->fetchArray(SQLITE3_NUM)){
         $ids[] = $row[0];
-        $test += 1;
     }
 }
-$ids = filterCombine($ids);
+$ids = filterCombine($ids, count($filters));
 $result = dbGetEntries($db, $ids);
 formatResults($result);
 $db->close();

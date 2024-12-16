@@ -14,16 +14,28 @@
 
                 document.getElementById('searchTerm'+formId).hidden=true;
                 document.getElementById('searchTerm'+formId).disabled=true;
-            }
-            else {
+                document.getElementById('materialInput'+formId).hidden=true;
+                document.getElementById('materialInput'+formId).disabled=true;
+            } else if (value === "Materials/Techniques") {
                 document.getElementById('startDateInput'+formId).hidden=true;
                 document.getElementById('startDateInput'+formId).disabled=true;
                 document.getElementById('endDateInput'+formId).hidden=true;
                 document.getElementById('endDateInput'+formId).disabled=true;
+                document.getElementById('searchTerm'+formId).hidden=true;
+                document.getElementById('searchTerm'+formId).disabled=true;
+
+                document.getElementById('materialInput'+formId).hidden=false;
+                document.getElementById('materialInput'+formId).disabled=false;
+            } else {
+                document.getElementById('startDateInput'+formId).hidden=true;
+                document.getElementById('startDateInput'+formId).disabled=true;
+                document.getElementById('endDateInput'+formId).hidden=true;
+                document.getElementById('endDateInput'+formId).disabled=true;
+                document.getElementById('materialInput'+formId).hidden=true;
+                document.getElementById('materialInput'+formId).disabled=true;
 
                 document.getElementById('searchTerm'+formId).hidden=false;
                 document.getElementById('searchTerm'+formId).disabled=false;
-
             }
             document.getElementById('filterType'+formId).disabled=false;
         }
@@ -87,9 +99,19 @@
             enddateinput.setAttribute('name', 'endDateInput' + formId);
             enddateinput.setAttribute('id', 'endDateInput' + formId);
             enddateinput.setAttribute('placeholder', 'Enter end year');
-            enddateinput.setAttribute('hidden', true);
-            enddateinput.setAttribute('disabled', true);
+            enddateinput.setAttribute('hidden', 'true');
+            enddateinput.setAttribute('disabled', 'true');
             fieldset.appendChild(enddateinput);
+
+            var materialinput = document.createElement('input');
+            materialinput.setAttribute('type', 'text');
+            materialinput.setAttribute('name', 'materialInput' + formId);
+            materialinput.setAttribute('id', 'materialInput' + formId);
+            materialinput.setAttribute('placeholder', 'Enter search term');
+            materialinput.setAttribute('list', 'materialList');
+            materialinput.setAttribute('hidden', 'true');
+            materialinput.setAttribute('disabled', 'true');
+            fieldset.appendChild(materialinput);
 
             var addbutton = document.createElement("button");
             addbutton.setAttribute('id', 'addFilter' + (formId + 1));
@@ -133,44 +155,24 @@
         }
     </script>
 </head>
-<body>
+<body onload="addFilter(1)">
 <h1>AMAM Database Lookup</h1>
 <form id="queryForm" action="form_action.php" method="get">
+    <datalist id="materialList">
+        <?php
+        $db = new SQLite3('museum.db', SQLITE3_OPEN_READONLY, "");
+        $materials = $db->query('select Material from materials');
+        while ($material = $materials->fetchArray(SQLITE3_NUM)) {
+            printf('<option value="%s">', $material[0]);
+        }
+        ?>
+    </datalist>
     <fieldset id="filterCombineSet">
         <legend>Filter Combine</legend>
         <label>AND<input type="radio" name="filterCombine" id="filterCombineAnd" value="AND" checked></label>
         <label>OR<input type="radio" name="filterCombine" id="filterCombineOr" value="OR"></label>
     </fieldset>
-    <fieldset id="filter1">
-        <legend>Filter 1</legend>
-        <select name="filterType1" id="filterType1" onchange="handleSelection(value, 1)">
-            <option value="Keyword" selected>Keyword</option>
-            <option value="ObjectID">Object ID</option>
-            <option value="Accession Number">Accession Number</option>
-            <option value="Object Number">Object Number</option>
-            <option value="Sort Number">Sort Number</option>
-            <option value="Department">Department</option>
-            <option value="Classification">Classification</option>
-            <option value="Acquisition Method">Acquisition Method</option>
-            <option value="Object Status">Object Status</option>
-            <option value="Artist/Maker">Artist/Maker</option>
-            <option value="Title">Title</option>
-            <option value="Object Name">Object Name</option>
-            <option value="Dates">Dates</option>
-            <option value="Materials/Techniques">Materials/Techniques</option>
-            <option value="Dimensions">Dimensions</option>
-            <option value="Description">Description</option>
-            <option value="Credit Line">Credit Line</option>
-            <option value="Culture">Culture</option>
-            <option value="Period/Dynasty">Period/Dynasty</option>
-            <option value="eMuseum Label Text">eMuseum Label Text</option>
-        </select>
-        <input type="text" name="searchTerm1" id="searchTerm1" placeholder="Enter search term">
-        <input type="number" name="startDateInput1" id="startDateInput1" placeholder="Enter start year" hidden disabled>
-        <input type="number" name="endDateInput1" id="endDateInput1" placeholder="Enter end year" hidden disabled>
-    </fieldset>
-    <button id="addFilter2" onclick="addFilter(2)">Add Filter</button>
-    <button id="removeFilter1" onclick="removeFilter(1)">Remove Filter</button>
+    <button id="addFilter1" onclick="addFilter(1)">Add Filter</button>
     <br><br>
     <input type="submit" name="submitButton" id="submitButton">
 
