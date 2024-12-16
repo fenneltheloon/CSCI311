@@ -42,17 +42,17 @@
 
         function addFilter(formId) {
             document.getElementById('addFilter' + formId).remove();
-            var removebutton = document.getElementById('removeFilter' + (formId - 1));
+            let removebutton = document.getElementById('removeFilter' + (formId - 1));
             if (removebutton) {
                 removebutton.remove();
             }
-            var fieldset = document.createElement('fieldset');
+            let fieldset = document.createElement('fieldset');
             fieldset.setAttribute('id', 'filter' + formId);
-            var legend = document.createElement('legend');
+            const legend = document.createElement('legend');
             legend.innerText = 'Filter ' + formId;
             fieldset.appendChild(legend);
 
-            var filtertype = document.createElement("select");
+            const filtertype = document.createElement("select");
             filtertype.setAttribute('name', 'filterType' + formId);
             filtertype.setAttribute('id', 'filterType' + formId);
             filtertype.setAttribute('onchange', 'handleSelection(value, ' + formId + ')');
@@ -78,23 +78,23 @@
                 '<option value="eMuseum Label Text">eMuseum Label Text</option>\n';
             fieldset.appendChild(filtertype);
 
-            var searchterm = document.createElement("input");
+            const searchterm = document.createElement("input");
             searchterm.setAttribute('type', 'text');
             searchterm.setAttribute('name', 'searchTerm' + formId);
             searchterm.setAttribute('id', 'searchTerm' + formId);
             searchterm.setAttribute('placeholder', 'Enter search term');
             fieldset.appendChild(searchterm)
 
-            var startdateinput = document.createElement('input');
+            const startdateinput = document.createElement('input');
             startdateinput.setAttribute('type', 'number');
             startdateinput.setAttribute('name', 'startDateInput' + formId);
             startdateinput.setAttribute('id', 'startDateInput' + formId);
             startdateinput.setAttribute('placeholder', 'Enter start year');
-            startdateinput.setAttribute('hidden', true);
-            startdateinput.setAttribute('disabled', true);
+            startdateinput.setAttribute('hidden', 'true');
+            startdateinput.setAttribute('disabled', 'true');
             fieldset.appendChild(startdateinput);
 
-            var enddateinput = document.createElement('input');
+            const enddateinput = document.createElement('input');
             enddateinput.setAttribute('type', 'number');
             enddateinput.setAttribute('name', 'endDateInput' + formId);
             enddateinput.setAttribute('id', 'endDateInput' + formId);
@@ -103,7 +103,7 @@
             enddateinput.setAttribute('disabled', 'true');
             fieldset.appendChild(enddateinput);
 
-            var materialinput = document.createElement('input');
+            const materialinput = document.createElement('input');
             materialinput.setAttribute('type', 'text');
             materialinput.setAttribute('name', 'materialInput' + formId);
             materialinput.setAttribute('id', 'materialInput' + formId);
@@ -113,7 +113,7 @@
             materialinput.setAttribute('disabled', 'true');
             fieldset.appendChild(materialinput);
 
-            var addbutton = document.createElement("button");
+            const addbutton = document.createElement("button");
             addbutton.setAttribute('id', 'addFilter' + (formId + 1));
             addbutton.setAttribute('onclick', 'addFilter(' + (formId + 1) + ')');
             addbutton.innerText = "Add Filter";
@@ -124,10 +124,10 @@
             removebutton.innerText = "Remove Filter";
 
             if (formId === 1) {
-                var filtercombine = document.getElementById('filterCombineSet');
+                const filtercombine = document.getElementById('filterCombineSet');
                 filtercombine.after(fieldset, addbutton, removebutton);
             } else {
-                var lastfilter = document.getElementById('filter' + (formId - 1));
+                const lastfilter = document.getElementById('filter' + (formId - 1));
                 lastfilter.after(fieldset, addbutton, removebutton);
             }
         }
@@ -137,19 +137,19 @@
             document.getElementById('removeFilter' + formId).remove();
             document.getElementById('filter' + formId).remove();
 
-            var addbutton = document.createElement("button");
+            const addbutton = document.createElement("button");
             addbutton.setAttribute('id', 'addFilter' + formId);
             addbutton.setAttribute('onclick', 'addFilter(' + formId + ')');
             addbutton.innerText = "Add Filter";
             if (formId !== 1) {
-                var removebutton = document.createElement('button');
+                const removebutton = document.createElement('button');
                 removebutton.setAttribute('id', 'removeFilter' + (formId - 1));
                 removebutton.setAttribute('onclick', 'removeFilter(' + (formId - 1) + ')');
                 removebutton.innerText = "Remove Filter";
-                var lastfilter = document.getElementById('filter' + (formId - 1));
+                const lastfilter = document.getElementById('filter' + (formId - 1));
                 lastfilter.after(addbutton, removebutton);
             } else {
-                var filtercombine = document.getElementById('filterCombineSet');
+                const filtercombine = document.getElementById('filterCombineSet');
                 filtercombine.after(addbutton);
             }
         }
@@ -163,8 +163,9 @@
         $db = new SQLite3('museum.db', SQLITE3_OPEN_READONLY, "");
         $materials = $db->query('select Material from materials');
         while ($material = $materials->fetchArray(SQLITE3_NUM)) {
-            printf('<option value="%s">', $material[0]);
+            printf('<option value="%s"></option>', $material[0]);
         }
+        $db->close();
         ?>
     </datalist>
     <fieldset id="filterCombineSet">
